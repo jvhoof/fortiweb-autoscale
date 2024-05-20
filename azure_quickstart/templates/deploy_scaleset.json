@@ -25,13 +25,13 @@
         "description": "Size of VMs in the VM Scale Set."
       }
     },
-    "imageversion":{
-      "defaultValue":"latest",
-      "type":"String",
-      "metadata":{
-        "description":"FortiWeb image Version."
-       },
-      "allowedValues":[
+    "imageversion": {
+      "defaultValue": "latest",
+      "type": "String",
+      "metadata": {
+        "description": "FortiWeb image Version."
+      },
+      "allowedValues": [
         "latest"
       ]
     },
@@ -232,12 +232,26 @@
       }
     },
     "PublicIPForFWBVM": {
-        "defaultValue": "True",
-        "allowedValues": ["True", "False"],
-        "type": "String",
-        "metadata": {
-            "description": "Assign Public IP address to FWB VM. If set to 'True', the Public IP address will be assigned to FWB VM. If set to 'False', no public IP address will be allocated to FWB."
-        }
+      "defaultValue": "True",
+      "allowedValues": [ "True", "False" ],
+      "type": "String",
+      "metadata": {
+        "description": "Assign Public IP address to FWB VM. If set to 'True', the Public IP address will be assigned to FWB VM. If set to 'False', no public IP address will be allocated to FWB."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources."
+      }
+    },
+    "locationAzureFunction": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for Azure Function."
+      }
     }
   },
   "variables": {
@@ -270,14 +284,14 @@
     "scaleUpInterval": "[concat('PT', parameters('scaleUpTimeWindow'), 'M')]",
     "scaleDownInterval": "[concat('PT', parameters('scaleDownTimeWindow'), 'M')]",
     "dbName": "[concat(uniqueString(resourceGroup().id), 'db')]",
-    "deployFunAppUrl": "https://raw.githubusercontent.com/fortinet/fortiweb-autoscale/main/azure_quickstart/templates/deploy_funcapp.json",
+    "deployFunAppUrl": "https://raw.githubusercontent.com/jvhoof/fortiweb-autoscale/main/azure_quickstart/templates/deploy_funcapp.json",
     "lbFrontIPConfProMap": {
       "Internal": {
         "privateIPAllocationMethod": "Dynamic",
-          "subnet": {
-            "id": "[variables('subnet1ID')]"
-          },
-          "privateIPAddressVersion": "IPv4"
+        "subnet": {
+          "id": "[variables('subnet1ID')]"
+        },
+        "privateIPAddressVersion": "IPv4"
       },
       "Public": {
         "publicIPAddress": {
@@ -285,13 +299,13 @@
         }
       }
     },
-	"publicIpConf": {
-        "name": "pub1",
-        "properties": {
-            "idleTimeoutInMinutes": 15
-        }
+    "publicIpConf": {
+      "name": "pub1",
+      "properties": {
+        "idleTimeoutInMinutes": 15
+      }
     },
-	"IpConf" :"[if(equals(parameters('PublicIPForFWBVM'), 'True'), variables('publicIpConf'), '')]"
+    "IpConf": "[if(equals(parameters('PublicIPForFWBVM'), 'True'), variables('publicIpConf'), '')]"
   },
   "resources": [
     {
@@ -744,6 +758,9 @@
           },
           "packageResUrl": {
             "value": "https://github.com/fortinet/fortiweb-autoscale/releases/download/1.0.17/fortiweb-autoscale-azure-funcapp.zip"
+          },
+          "location": {
+            "value": "[parameters('locationAzureFunction')]"
           }
         }
       }

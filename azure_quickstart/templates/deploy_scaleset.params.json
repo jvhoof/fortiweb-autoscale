@@ -63,16 +63,16 @@
       "value": "funapp"
     },
     "tenantId": {
-      "value": null
+      "value": "## TO BE DEFINED ##"
     },
     "subscriptionId": {
-      "value": null
+      "value": "## TO BE DEFINED ##"
     },
     "restappId": {
-      "value": null
+      "value": "## TO BE DEFINED ##"
     },
     "restappSecret": {
-      "value": null
+      "value": "## TO BE DEFINED ##"
     },
     "heartbeatLoss": {
       "value": 6

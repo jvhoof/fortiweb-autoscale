@@ -241,14 +241,14 @@
     },
     "location": {
       "type": "string",
-      "defaultValue": "[resourceGroup().location]",
+      "defaultValue": "[parameters('location')]",
       "metadata": {
         "description": "Location for all resources."
       }
     },
     "locationAzureFunction": {
       "type": "string",
-      "defaultValue": "[resourceGroup().location]",
+      "defaultValue": "[parameters('location')]",
       "metadata": {
         "description": "Location for Azure Function."
       }
@@ -274,11 +274,7 @@
     "natSSHPool": "lbnatpoolssh",
     "natHTTPSPool": "lbnatpoolhttps",
     "pipName": "myvmsslbpip",
-    "zones": [
-      "1",
-      "2",
-      "3"
-    ],
+    "zones": "[pickZones('Microsoft.Network', 'publicIPAddresses', parameters('location'), 3)]",
     "funcAppName": "[concat(parameters('funcAppPrefix'), uniqueString(resourceGroup().id))]",
     "endPoint": "[concat('{\"cloud-initd\": \"disable\", \"config-url\": \"', 'https://', variables('funcAppName'), '.azurewebsites.net/api/AutoscaleHandler\"}')]",
     "scaleUpInterval": "[concat('PT', parameters('scaleUpTimeWindow'), 'M')]",
@@ -312,7 +308,7 @@
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[parameters('vnetName')]",
       "apiVersion": "2017-09-01",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('location')]",
       "properties": {
         "addressSpace": {
           "addressPrefixes": [
@@ -341,7 +337,7 @@
       "type": "Microsoft.Network/networkSecurityGroups",
       "apiVersion": "[variables('networkApiVersion')]",
       "name": "[variables('securityGroup')]",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('location')]",
       "properties": {
         "securityRules": [
           {
@@ -420,7 +416,7 @@
     {
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[variables('pipName')]",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('location')]",
       "apiVersion": "[variables('networkApiVersion')]",
       "condition": "[equals(parameters('loadBalancerType'), 'Public')]",
       "sku": {
@@ -433,7 +429,7 @@
     {
       "type": "Microsoft.Network/loadBalancers",
       "name": "[variables('loadBalancerName')]",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('location')]",
       "apiVersion": "[variables('networkApiVersion')]",
       "dependsOn": [
         "[concat('Microsoft.Network/publicIPAddresses/', variables('pipName'))]",
@@ -551,7 +547,7 @@
       },
       "name": "[parameters('vmssName')]",
       "apiVersion": "[variables('computeApiVersion')]",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('location')]",
       "zones": "[if(contains(createArray('Central US', 'France Central', 'North Europe', 'Southeast Asia', 'West Europe', 'West US 2'), resourceGroup().location), variables('zones'), json('null'))]",
       "plan": {
         "name": "fortinet_fw-vm_payg_v2",
@@ -657,7 +653,7 @@
       "type": "Microsoft.Insights/autoscaleSettings",
       "name": "[concat('cpuautoscale', variables('namingInfix'))]",
       "apiVersion": "[variables('autoscaleApiVersion')]",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('location')]",
       "properties": {
         "name": "[concat('cpuautoscale', variables('namingInfix'))]",
         "targetResourceUri": "[variables('vmssId')]",
